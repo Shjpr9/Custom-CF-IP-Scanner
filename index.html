@@ -3,8 +3,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta charset="utf8">
   <link href="https://fonts.cdnfonts.com/css/iranian-sans" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-    
+  <style>
+    body {
+      font-family: 'Iranian Sans', sans-serif;
+      font-size: 12px;
+      background: #888;
+      counter-reset: Serial;
+      direction: rtl;
+      margin: 0;
+    }
+    a {
+      color: #000;
+      text-decoration-line: none;
+    }
+    p {
+      margin: 0;
+      padding: 5px;
+    }
+    table {
+      font-size: 12px;
+      width: 100%;
+      border-collapse:collapse;
+    }
+    textarea {
+      padding: 8px;
+      width: 341px;
+      height: 129px;
+      text-align: left;
+      resize:vertical;
+      min-height: 37px;
+    }
+    th {
+      background: #aaa;
+      padding: 10px 2px;
+      height: 44px;
+      font-weight: normal;
+      text-align: right;
+    }
+    table.content td {
+      background: #ddd;
+      height: 20px;
+      padding: 8px;
+    }
+    table.list tr:nth-child(odd) td {
+      background: #ddd;
+    }
+    table.list tr:nth-child(even) td {
+      background: #ccc;
+    }
+    table.list tr:last-child td {
+      border-bottom: 2px solid #666;
+    }
+    td {
+      padding: 5px;
+    }
+    table.list tr td:first-child:before {
+      counter-increment: Serial;
+      content: counter(Serial);
+    }
+    table.list tr td:last-child, th:last-child {
+      text-align: left;
+    }
+    div.text-div {
+      background-color: #ddd;
+      width: 340px;
+      height: 20px;
+      padding: 10px;
+    }
+    input[type=number] {
+      width: 60px;
+    }
+    input[type=text] {
+      width: 170px;
+    }
+    button.start{
+      width: 150px;
+      font-size: 16px;
+      font-weight: bold;
+      color: green;
+      padding: 7px;
+      float: left;
+    }
+    button.cancel{
+      width: 150px;
+      font-size: 16px;
+      font-weight: bold;
+      color: red;
+      padding: 7px;
+      float: left;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -21,21 +109,6 @@
         </td>
         <td>
           <label>تاخیر مجاز: <input type="number" id="max-latency" min="50" max="3000" step="50"/></label>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <label>عبارت منظم: <input type="text" dir="ltr" id="ip-regex" placeholder="^104\.17\.|^141\." /></label>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <label>فقط از این رنج آی‌پی: <input type="text" dir="ltr" id="ip-include" placeholder="104.17,141" /></label>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <label>شامل این رنج آی‌پی نشود: <input type="text" dir="ltr" id="ip-exclude" placeholder="8,103.22" /></label>
         </td>
       </tr>
       <tr>
@@ -97,10 +170,7 @@ let ipRegex;
 let immediateStop = false;
 
 document.getElementById('max-ip').value = localStorage.getItem('max-ip') || 20;
-document.getElementById('max-latency').value = localStorage.getItem('max-latency') || 400;
-document.getElementById('ip-regex').value = localStorage.getItem('ip-regex');
-document.getElementById('ip-include').value = localStorage.getItem('ip-include');
-document.getElementById('ip-exclude').value = localStorage.getItem('ip-exclude');
+document.getElementById('max-latency').value = localStorage.getItem('max-latency') || 1000;
 
 function cancelScan() {
   immediateStop = true;
@@ -109,15 +179,9 @@ function cancelScan() {
 function startScan() {
   maxIP = ~~document.getElementById('max-ip').value;
   maxLatency = ~~document.getElementById('max-latency').value;
-  ipRegex = document.getElementById('ip-regex').value;
-  ipInclude = document.getElementById('ip-include').value;
-  ipExclude = document.getElementById('ip-exclude').value;
 
   localStorage.setItem('max-ip', maxIP);
   localStorage.setItem('max-latency', maxLatency);
-  localStorage.setItem('ip-regex', ipRegex);
-  localStorage.setItem('ip-include', ipInclude);
-  localStorage.setItem('ip-exclude', ipExclude);
 
   testNo = 0;
   numberOfWorkingIPs = 0;
@@ -134,21 +198,7 @@ function startScan() {
     var regex = null;
     var includeRegex = null;
     var excludeRegex = null;
-    if (ipRegex) {
-      regex = new RegExp(ipRegex);
-    }
-    if (ipInclude) {
-      includeRegex = new RegExp(
-        ipInclude.split(',').map(c => {return '^' + c.replaceAll('.', '\\.') + '\\.'}).join('|')
-      );
-    }
-    if (ipExclude) {
-      excludeRegex = new RegExp(
-        ipExclude.split(',').map(c => {return '^' + c.replaceAll('.', '\\.') + '\\.'}).join('|')
-      );
-    }
     ips = ips.concat(processIps());
-
     ips = randomizeElements(ips);
 
     document.getElementById('start-hint').style.display = 'none';
