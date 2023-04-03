@@ -19,6 +19,14 @@ body {
       width: 100%;
       border-collapse:collapse;
     }
+    textarea {
+      padding: 8px;
+      width: 341px;
+      height: 129px;
+      text-align: left;
+      resize:vertical;
+      min-height: 37px;
+    }
     th {
       background: #aaa;
       padding: 10px 2px;
@@ -49,9 +57,6 @@ body {
     }
     table.list tr td:last-child, th:last-child {
       text-align: left;
-    }
-    div.scan-finished {
-/*      display: none;*/
     }
     div.text-div {
       background-color: #ddd;

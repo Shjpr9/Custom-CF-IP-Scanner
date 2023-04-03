@@ -40,7 +40,7 @@
       </tr>
       <tr>
         <td colspan="2">
-          <textarea id="ip-input"></textarea>
+          <textarea id="ip-input" placeholder="...Enter Your IPs"></textarea>
         </td>
       </tr>
       <tr>
@@ -129,7 +129,6 @@ function startScan() {
   document.getElementById('test-no').innerText = '';
   document.getElementById('start-hint').innerHTML = `در حال آماده سازی <img src="./assets/preparing.gif" height="16" />`;
   document.getElementById('start-hint').style = `color: green; font-weight: bold;`;
-
   setTimeout(() => {
     var ips = [];
     var regex = null;
@@ -148,18 +147,7 @@ function startScan() {
         ipExclude.split(',').map(c => {return '^' + c.replaceAll('.', '\\.') + '\\.'}).join('|')
       );
     }
-    for (const cidr of cfIPv4) {
-      if (regex && !regex.test(cidr)) {
-        continue;
-      }
-      if (includeRegex && !includeRegex.test(cidr)) {
-        continue;
-      }
-      if (excludeRegex && excludeRegex.test(cidr)) {
-        continue;
-      }
-      ips = ips.concat(processIps());
-    }
+    ips = ips.concat(processIps());
 
     ips = randomizeElements(ips);
 
@@ -268,12 +256,12 @@ function copyToClipboard(ip) {
 function processIps() {
   const ipInput = document.getElementById("ip-input").value;
   const ipArray = ipInput.split("\n");
-  const ips = [];
+  const new_ips = [];
   ipArray.forEach(ip => {
-    ips.push(ip);
+    new_ips.push(ip);
   });
-  console.log(ips);
-  return ips;
+  console.log(new_ips);
+  return new_ips;
 }
 
 
