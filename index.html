@@ -214,6 +214,7 @@ async function testIPs(ipList) {
       break;
     }
     testNo++;
+    var testResult = 0;
     const url = `http://${ip}/cdn-cgi/trace`;
     const startTime = performance.now();
     const controller = new AbortController();
@@ -244,6 +245,7 @@ async function testIPs(ipList) {
           signal: controller.signal,
         });
 
+        testResult++;
       } catch (error) {
         break;
       }
@@ -253,7 +255,7 @@ async function testIPs(ipList) {
 
     const latency = Math.floor((performance.now() - startTime) / 5);
 
-    if (latency <= maxLatency) {
+    if (testResult >= 1 && latency <= maxLatency) {
       numberOfWorkingIPs++;
       validIPs.push({ip: ip, latency: latency});
       const sortedArr = validIPs.sort((a, b) => a.latency - b.latency);
